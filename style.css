@@ -1,0 +1,11 @@
+.select2-dropdown{
+    z-index: 9999999;
+}
+.select-employee {
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+    margin-bottom: 10px;
+  }
+.invalid-field {
+    border: 1px solid red;
+}
