@@ -150,9 +150,8 @@ $(document).ready(function() {
                 extend: 'print',
                 customize: function(win) {
                     $(win.document.body).css('font-size', '10pt');
-                    $(win.document.body).find('title').remove(); 
-                    $(win.document.body).find('table tr th:last-child, table tr td:last-child').css('display', 'none');
-                    $(win.document.body).prepend('<h1 style="text-align:center;">REPORT RETIRED PERSONNEL</h1>');
+                    $(win.document.body).find('th:nth-last-child(-n+2), td:nth-last-child(-n+2)').css('display', 'none');
+                    $(win.document.body).prepend('<h3 style="text-align:center;"><b>RETIRED PERSONNEL</b></h3>');
                 },
                 orientation: 'landscape'
             }
