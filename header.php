@@ -13,13 +13,6 @@ if (isset($_SESSION['office_name'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <style>
-    @media print{
-      title{
-        display:none !important;
-      }
-    }
-  </style>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>RTM | LDN</title>

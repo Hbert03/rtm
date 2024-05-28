@@ -37,7 +37,7 @@ function updateChart(data) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'MONTHY DATA OF RETIRED PERSONNEL',
+                    label: 'MONTHLY DATA OF RETIRED PERSONNEL',
                     data: values,
                     backgroundColor: [
                         'rgba(40, 67, 135)',

@@ -1,5 +1,5 @@
 <?php
-include('../../config/database.php');
+include('database.php');
 
 
 if(isset($_POST['personnel'])){

@@ -6,6 +6,10 @@
     background-color: #f7f7f7;
     margin-bottom: 10px;
   }
-.invalid-field {
-    border: 1px solid red;
+
+@media print {
+  @page {
+  size: landscape;
+  height: auto; 
 }
+  }
