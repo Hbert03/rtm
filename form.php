@@ -13,7 +13,13 @@
             </select>
             <input class="form-control mb-1" type="text" id="position" name="position" placeholder="Position" >
             <input class="form-control mb-1" type="text" id="school" name="school" placeholder="School" >
-            <input class="form-control mb-1" type="text"id="purpose" name="purpose" placeholder="Purpose" >
+            <select class="form-control mb-1" name="purpose" id="purpose" required>
+                <option style="color:gray" disabled selected>Select Purpose</option>
+                <option value="Retirement">Retirement</option>
+                <option value="Deceased">Deceased</option>
+                <option value="Transfer">Transfer</option>
+                <option value="Resign">Resign</option>
+            </select>
             <input class="form-control mb-1" type="text"id="status" name="status" placeholder="Status" >
             <input class="form-control mb-1" type="text"id="effectivity" name="effectivity" placeholder="Effectivity" >
             <input class="form-control mb-1" type="text"id="so_number" name="so_number" placeholder="SO Number" >

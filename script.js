@@ -1,21 +1,93 @@
 $("a#add_personnel").on("click", function(){
+    openAddPersonnelModal();
+});
+
+function openAddPersonnelModal() {
     $.ajax({
         url: "form.php",
         dataType: "html",
         success: function (returnedData) {
-            swal.fire({
+            Swal.fire({
                 title: "PERSONNEL DETAILS",
                 html: returnedData,
                 didOpen: function () {
                     employee_select();
                     listener();
                 },
-        showConfirmButton: false,
-        allowOutsideClick: false,     
+                showConfirmButton: false,
+                allowOutsideClick: false,     
+            });
+        },
     });
-    },
-})
-});
+}
+
+function listener() {
+    $("#save").on("click", function() {
+        let details = {
+            save: true,
+            personnel: $("#personnel").val(),
+            position: $("#position").val(),
+            school: $("#school").val(),
+            purpose: $("#purpose").val(),
+            status: $("#status").val(),
+            effectivity: $("#effectivity").val(),
+            so_number: $("#so_number").val(), 
+            control: $("#control").val(),
+            date: $("#date").val(),
+        };
+        let validation = true;
+        for (let key in details) {
+            if (details[key] === "") {
+                validation = false;
+                toastr.error("Please fill in all required fields.");
+                break;
+            }
+        }
+
+        if (validation) {
+            $.ajax({
+                url: "save_function.php",
+                type: "POST",
+                data: details,
+                success: function(returnedData) {
+                    if (returnedData == 1) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Personnel Saved",
+                            allowOutsideClick: false,
+                            showConfirmButton: true,
+                            showCloseButton: false
+                        }).then(() => {
+                            $("input[type=text], textarea").val("");
+                            openAddPersonnelModal();
+                        });
+                    } else if (returnedData == -1) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Personnel Already in Retired List",
+                            allowOutsideClick: false,
+                            showConfirmButton: true,
+                            showCloseButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "ERROR",
+                            allowOutsideClick: false,
+                            showConfirmButton: true,
+                            showCloseButton: false
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                }
+            });
+        }
+    });
+}
+
+
 function employee_select() {
     $('select.personnel').select2({
         theme: "bootstrap4",
@@ -71,70 +143,7 @@ function fetchPosition(hris_code) {
         }
     });
 }
-function listener() {
-    $("#save").on("click", function() {
-        let details = {
-            save: true,
-            personnel: $("#personnel").val(),
-            position: $("#position").val(),
-            school: $("#school").val(),
-            purpose: $("#purpose").val(),
-            status: $("#status").val(),
-            effectivity: $("#effectivity").val(),
-            so_number: $("#so_number").val(), 
-            control: $("#control").val(),
-            date: $("#date").val(),
-        };
-        let validation = true;
-        for (let key in details) {
-            if (details[key] === "") {
-                validation = false;
-                toastr.error("Please fill in all required fields.");
-                break;
-            }
-        }
 
-        if (validation) {
-            $.ajax({
-                url: "save_function.php",
-                type: "POST",
-                data: details,
-                success: function(returnedData) {
-                    if (returnedData == 1) {
-                        Swal.fire({
-                            icon: "success",
-                            title: "Personnel Saved",
-                            allowOutsideClick: false,
-                            showConfirmButton: true,
-                            showCloseButton: false
-                        }).then(() => {
-                            $("input[type=text], textarea").val("");
-                        });
-                    } else if (returnedData == -1) {
-                        Swal.fire({
-                            icon: "warning",
-                            title: "Personnel Already in Retired List",
-                            allowOutsideClick: false,
-                            showConfirmButton: true,
-                            showCloseButton: false
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: "warning",
-                            title: "ERROR",
-                            allowOutsideClick: false,
-                            showConfirmButton: true,
-                            showCloseButton: false
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error:", error);
-                }
-            });
-        }
-    });
-}
 $(document).ready(function() {
     $('#retirement_table').DataTable({
         serverSide: true,
