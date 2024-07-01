@@ -1,3 +1,3 @@
 <?php
-$conn = mysqli_connect("192.168.88.215","jda","passw0rd456","depedldn");
+$conn = mysqli_connect("localhost", "herb", "password456", "depeddata");
 ?>
