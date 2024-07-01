@@ -1,5 +1,5 @@
 <?php
 session_start();
-$conn = mysqli_connect("192.168.88.215", "jda", "passw0rd456", "depedldn");
+$conn = mysqli_connect("localhost", "jda", "password456", "depeddata");
 
 ?>
