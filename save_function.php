@@ -34,7 +34,39 @@ if(isset($_POST['save'])) {
         }
     }
 
-    mysqli_close($conn);
 }
+
+
+if(isset($_POST['save1'])) {
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    
+    $name1 = $_POST['name1'];
+    $mname1 = $_POST['mname1'];
+    $lname1 = $_POST['lname1'];
+    $position1 = $_POST['position1'];
+    $school1 = $_POST['school1'];
+    $purpose1 = $_POST['purpose1'];
+    $status1 = $_POST['status1'];
+    $effectivity1 = $_POST['effectivity1'];
+    $so_number1 = $_POST['so_number1'];
+    $control1 = $_POST['control1'];
+    $date1 = $_POST['date1'];
+   
+    
+        $sql = "INSERT INTO retired_personnel (fname, mname, lname, position, school, purpose, status, effectivity, SO_numbers, control_no, date)
+                VALUES ('$name1', '$mname1', '$lname1', '$position1', '$school1', '$purpose1', '$status1', '$effectivity1', '$so_number1', '$control1', '$date1')";
+
+        if (mysqli_query($conn, $sql)) {
+            echo "1";
+        } else {
+          
+            echo "0";
+        }
+    }
+
+
+
 
 ?>

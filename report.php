@@ -50,47 +50,88 @@
 
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card">
-            <div style="font-size:18px" class="card-header bg-secondary">
-                <h3 class="card-title">Personnel Retired List</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div style="font-size:18px" class="card-header bg-secondary">
+            <h3 class="card-title">Personnel Retired List</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="tabs">
+              <ul class="nav nav-tabs mb-3" id="personnelTabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active " id="tab1-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Latest</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">2019 year below</a>
+                </li>
+              </ul>
+              <div class="tab-content" id="personnelTabsContent">
+                <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                  <!-- Content for Tab 1 -->
+                  <div class="table-responsive">
+                    <table id="retirement_table" class="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Lastname</th>
+                          <th>Position</th>
+                          <th>School</th>
+                          <th>Purpose</th>
+                          <th>Status</th>
+                          <th>Effectivity</th>
+                          <th>SO Numbers</th>
+                          <th>Control Number</th>
+                          <th>Date</th>
+                          <th>EDIT</th>
+                          <th>DELETE</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
                 <div class="table-responsive">
-                  <table id="retirement_table" class="table table-bordered table-striped">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Lastname</th>
-                        <th>Position</th>
-                        <th>School</th>
-                        <th>Purpose</th>
-                        <th>Status</th>
-                        <th>Effectivity</th>
-                        <th>SO Numbers</th>
-                        <th>Control Number</th>
-                        <th>Date</th>
-                        <th>EDIT</th>
-                        <th>DELETE</th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
+                    <table id="retirement_table1" class="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Middlename</th>
+                          <th>Lastname</th>
+                          <th>Position</th>
+                          <th>School</th>
+                          <th>Purpose</th>
+                          <th>Status</th>
+                          <th>Effectivity</th>
+                          <th>SO Numbers</th>
+                          <th>Control Number</th>
+                          <th>Date</th>
+                          <th>EDIT</th>
+                          <th>DELETE</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
                 </div>
               </div>
-              <!-- /.card-body -->
             </div>
-            <!-- /.card -->
           </div>
-          <!-- /.col -->
+          <!-- /.card-body -->
         </div>
-        <!-- /.row -->
+        <!-- /.card -->
       </div>
-      <!-- /.container-fluid -->
-    </section>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container-fluid -->
+</section>
+
     <!-- /.content -->
   </div>
 

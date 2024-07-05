@@ -7,7 +7,11 @@ function fetchData() {
 
     $currentMonthLabel = date('F Y'); 
     
-    $sql = "SELECT COUNT(*) as total FROM retired_personnel WHERE MONTH(date) = MONTH(CURDATE())";
+    $sql = "SELECT COUNT(*) as total 
+    FROM retired_personnel 
+    WHERE MONTH(date) = MONTH(CURDATE()) 
+    AND YEAR(date) = YEAR(CURDATE());
+    ";
     $result1 = $conn->query($sql);
     while ($row = $result1->fetch_assoc()) {
         $data['labels'][] = 'Retired Personnel in ' . $currentMonthLabel; 
