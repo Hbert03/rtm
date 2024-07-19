@@ -8,7 +8,10 @@
 </head>
 <body>
     <div>
-        <button type="button" id="switchForm" class="btn btn-info btn-sm mb-2">Switch Form</button>
+        <div class="d-flex">
+        <button type="button" id="switchForm" class="btn btn-info btn-sm mb-2 pe-2"><span><i class="fas fa-random"></i></span> Switch Form</button>
+        <button type="button" id="switchForm1" class="btn btn-info btn-sm mb-2 pe-2"><span><i class="fas fa-plus"></i></span> ADD SO</button>
+        </div>
         <form id="saveform" >
             <select class="form-control personnel"id="personnel" name="personnel">
             </select>
@@ -48,6 +51,14 @@
             <input class="form-control mb-1" type="text"id="so_number1" name="so_number1" placeholder="SO Number" >
             <input class="form-control mb-1" type="text"id="control1" name="control1" placeholder="Control #" >
             <input class="form-control mb-1" type="date"id="date1" name="date1" placeholder="DATE" >
+            <button type="button" id="save1" class="btn btn-secondary btn-sm btn-block my-2 save1" name="save1">SAVE</button>
+            <a class="btn btn-danger btn-sm btn-block my-2" onclick="swal.close()">Cancel</a>
+        </form>
+
+        <form id="saveform2" style="display:none">
+            <select class="form-control personnel1"id="personnel1" name="personnel1">
+            </select>
+            <input class="form-control" type="file" name="so">
             <button type="button" id="save1" class="btn btn-secondary btn-sm btn-block my-2 save1" name="save1">SAVE</button>
             <a class="btn btn-danger btn-sm btn-block my-2" onclick="swal.close()">Cancel</a>
         </form>

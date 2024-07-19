@@ -55,7 +55,7 @@ if(isset($_POST['save1'])) {
     $date1 = $_POST['date1'];
    
     
-        $sql = "INSERT INTO retired_personnel (fname, mname, lname, position, school, purpose, status, effectivity, SO_numbers, control_no, date)
+        $sql = "INSERT INTO retired_personnel1 (fname, middle_name, lastname, position, school, purpose, status, effectivity, SO_number, control_number, date)
                 VALUES ('$name1', '$mname1', '$lname1', '$position1', '$school1', '$purpose1', '$status1', '$effectivity1', '$so_number1', '$control1', '$date1')";
 
         if (mysqli_query($conn, $sql)) {

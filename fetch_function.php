@@ -169,9 +169,9 @@ if (isset($_POST['retirement_table1'])) {
     {
         global $conn;
 
-        $sortableColumns = array('hris_code', 'firstname', 'lastname', 'classification');
+        $sortableColumns = array('fname', 'middle_name', 'lastname');
 
-        $orderBy = 'hris_code';
+        $orderBy = 'fname';
         $orderDir = 'ASC';
 
         
@@ -184,15 +184,12 @@ if (isset($_POST['retirement_table1'])) {
             }
         }
        
-        $query = "SELECT * FROM retired_personnel WHERE hris_code is NULL";
-
+        $query = "SELECT * FROM retired_personnel1 WHERE 1=1";
         if (!empty($search)) {
-            $query .= " AND ( name LIKE '%" . $search . "%' OR lname LIKE '%" . $search . "%' position LIKE '%". $search ."%')";
+            $query .= " AND (fname LIKE '%" . $search . "%' OR middle_name LIKE '%" . $search . "%' OR lastname LIKE '%". $search ."%')";
         }
 
-        $query .= " ORDER BY $orderBy $orderDir";
-
-        $query .= " LIMIT $start, $length";
+        $query .= " ORDER BY $orderBy $orderDir LIMIT $start, $length";
 
         $result = $conn->query($query);
 
@@ -203,9 +200,9 @@ if (isset($_POST['retirement_table1'])) {
             $data[] = $row;
         }
 
-        $totalQuery = "SELECT COUNT(*) AS total from retired_personnel where hris_code is NULL";
+        $totalQuery = "SELECT COUNT(*) AS total from retired_personnel1 where 1=1";
         if (!empty($search)) {
-         $totalQuery .= " AND ( name LIKE '%" . $search . "%' OR lname LIKE '%" . $search . "%' position LIKE '%". $search ."%')";
+         $totalQuery .= " AND (fname LIKE '%" . $search . "%' OR middle_name LIKE '%" . $search . "%' OR lastname LIKE '%". $search ."%')";
          }
         $totalResult = $conn->query($totalQuery);
         $totalRow = $totalResult->fetch_assoc();
@@ -255,7 +252,7 @@ if (isset($_POST['getdata'])) {
 
 if (isset($_POST['getdata1'])) {
     $id = $_POST['id'];
-    $query = "SELECT * FROM  retired_personnel  WHERE id=?";
+    $query = "SELECT * FROM  retired_personnel1  WHERE id=?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $id); 
     $stmt->execute();
@@ -324,4 +321,15 @@ if (isset($_POST['delete'])) {
     exit();
 }
 
+
+if (isset($_POST['delete1'])) { 
+    $fileId = $_POST['id'];
+    $query = "DELETE FROM retired_personnel1 WHERE id = '$fileId'";
+    if (mysqli_query($conn, $query)) {
+        echo "Your data has been deleted."; 
+    } else {
+        echo "Failed to delete data."; 
+    }
+    exit();
+}
 ?>

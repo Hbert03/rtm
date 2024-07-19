@@ -15,9 +15,7 @@
   }
 
   #switchForm{
-  border-radius: 14px;
-  justify-content: right;
-  align-items:right;
+  border-radius: 15px;
   }
   #switchForm:hover {
     background: linear-gradient(to right, rgb(211, 55, 55), rgb(197, 172, 27));

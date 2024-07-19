@@ -15,6 +15,7 @@ function openAddPersonnelModal() {
                     listener();
                     listener1();
                     setupFormSwitching();
+                    addSO();
                 },
                 showConfirmButton: false,
                 allowOutsideClick: false,     
@@ -162,7 +163,14 @@ function setupFormSwitching() {
         $("#saveform").toggle();
         $("#saveform1").toggle();
     });
-}
+};
+
+function addSO() {
+    $("#switchForm1").on("click", function() {
+        $("#saveform2").toggle();
+        $("#saveform").toggle();
+    });
+};
 
 function employee_select() {
     $('select.personnel').select2({
@@ -335,15 +343,15 @@ $(document).ready(function() {
         ],
         columns: [
             { "data": "fname" },
-            { "data": "mname" },
-            { "data": "lname" },
+            { "data": "middle_name" },
+            { "data": "lastname" },
             { "data": "position" },
             { "data": "school" },
             { "data": "purpose" },
             { "data": "status" },
             { "data": "effectivity" },
-            { "data": "SO_numbers" },
-            { "data": "control_no" },
+            { "data": "SO_number" },
+            { "data": "control_number" },
             { "data": "date" },
             {
                 "data": null,
@@ -472,9 +480,9 @@ $(document).ready(function() {
                                   '<label>Effectivity:</label>' +
                                   '<input id="swal-input3" class="form-control mb-2" value="' + data[0].effectivity + '">' +
                                   '<label>SO Number:</label>' +
-                                  '<input id="swal-input4" class="form-control mb-2" value="' + data[0].SO_numbers + '">' +
+                                  '<input id="swal-input4" class="form-control mb-2" value="' + data[0].SO_number + '">' +
                                   '<label>Control Number:</label>' +
-                                  '<input id="swal-input5" class="form-control mb-2" value="' + data[0].control_no + '">',
+                                  '<input id="swal-input5" class="form-control mb-2" value="' + data[0].control_number + '">',
                             focusConfirm: false,
                             confirmButtonText: 'Update',
                             preConfirm: () => {
@@ -529,7 +537,7 @@ $(document).ready(function() {
 
 
     function deleteID() {
-        $('#retirement_table, #retirement_table1').on('click', '.delete', function() {
+        $('#retirement_table, #retirement_table2').on('click', '.delete', function() {
             var id = $(this).data('delete');
             console.log(id);
             Swal.fire({
@@ -569,6 +577,50 @@ $(document).ready(function() {
                 }
             });
         });
+}
+
+
+function deleteID() {
+    $('#retirement_table1').on('click', '.delete', function() {
+        var id = $(this).data('delete');
+        console.log(id);
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete it?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'fetch_function.php',
+                    type: 'POST',
+                    data: {
+                        delete1: true,
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response.trim() === "Your data has been deleted.") {
+                            Swal.fire(
+                                'Deleted!',
+                                'File has been deleted successfully.',
+                                'success'
+                            );
+                            $('#retirement_table, #retirement_table1').DataTable().ajax.reload(null, false);
+                        } else {
+                            Swal.fire(
+                                'Failed!',
+                                'Failed to delete file.',
+                                'error'
+                            );
+                        }
+                    },
+                });
+            }
+        });
+    });
 }
 
     
