@@ -117,7 +117,7 @@ if (isset($_POST['retirement_table'])) {
         $query = "SELECT e.firstname, e.lastname, r.* FROM tbl_employee e INNER JOIN retired_personnel r ON e.hris_code = r.hris_code";
 
         if (!empty($search)) {
-            $query .= " AND (e.hris_code LIKE '%" . $search . "%' OR e.firstname LIKE '%" . $search . "%' OR e.lastname LIKE '%" . $search . "%')";
+            $query .= " AND (e.hris_code LIKE '%" . $search . "%' OR e.firstname LIKE '%" . $search . "%' OR e.lastname LIKE '%" . $search . "%' OR r.position LIKE '%". $search ."%')";
         }
 
         $query .= " ORDER BY $orderBy $orderDir";
@@ -136,7 +136,73 @@ if (isset($_POST['retirement_table'])) {
         $totalQuery = "SELECT COUNT(*) AS total 
         FROM tbl_employee e INNER JOIN retired_personnel r ON e.hris_code = r.hris_code";
         if (!empty($search)) {
-         $totalQuery .= " AND (e.hris_code LIKE '%".$search."%' OR e.firstname LIKE '%".$search."%' OR e.lastname LIKE '%" . $search."%')";
+         $totalQuery .= " AND (e.hris_code LIKE '%".$search."%' OR e.firstname LIKE '%".$search."%' OR e.lastname LIKE '%" . $search."%' OR r.position LIKE '%". $search . "%')";
+         }
+        $totalResult = $conn->query($totalQuery);
+        $totalRow = $totalResult->fetch_assoc();
+        $totalRecords = $totalRow['total'];
+
+        $output = array(
+            "draw" => intval($draw),
+            "recordsTotal" => intval($totalRecords),
+            "recordsFiltered" => intval($totalRecords),
+            "data" => $data
+        );
+
+        return json_encode($output);
+    }
+
+    $draw = $_POST["draw"];
+    $start = $_POST["start"];
+    $length = $_POST["length"];
+    $search = $_POST["search"]["value"];
+
+    echo getDataTable($draw, $start, $length, $search);
+    exit();
+}
+
+
+
+
+if (isset($_POST['retirement_table1'])) {
+    function getDataTable($draw, $start, $length, $search)
+    {
+        global $conn;
+
+        $sortableColumns = array('fname', 'middle_name', 'lastname');
+
+        $orderBy = 'fname';
+        $orderDir = 'ASC';
+
+        
+        if (isset($_POST['order'][0]['column']) && isset($_POST['order'][0]['dir'])) {
+            $columnIdx = intval($_POST['order'][0]['column']);
+            $orderDir = $_POST['order'][0]['dir'];
+
+            if (isset($sortableColumns[$columnIdx])) {
+                $orderBy = $sortableColumns[$columnIdx];
+            }
+        }
+       
+        $query = "SELECT * FROM retired_personnel1 WHERE 1=1";
+        if (!empty($search)) {
+            $query .= " AND (fname LIKE '%" . $search . "%' OR middle_name LIKE '%" . $search . "%' OR lastname LIKE '%". $search ."%')";
+        }
+
+        $query .= " ORDER BY $orderBy $orderDir LIMIT $start, $length";
+
+        $result = $conn->query($query);
+
+
+        $data = array();
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+
+        $totalQuery = "SELECT COUNT(*) AS total from retired_personnel1 where 1=1";
+        if (!empty($search)) {
+         $totalQuery .= " AND (fname LIKE '%" . $search . "%' OR middle_name LIKE '%" . $search . "%' OR lastname LIKE '%". $search ."%')";
          }
         $totalResult = $conn->query($totalQuery);
         $totalRow = $totalResult->fetch_assoc();
@@ -184,6 +250,27 @@ if (isset($_POST['getdata'])) {
 }
 
 
+if (isset($_POST['getdata1'])) {
+    $id = $_POST['id'];
+    $query = "SELECT * FROM  retired_personnel1  WHERE id=?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $id); 
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result) {
+        $data = array();
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        echo json_encode($data);
+    } else {
+        echo "Error executing query: " . $conn->error;
+    }
+    exit();
+}
+
+
 if (isset($_POST['update'])) {
     $id = $_POST['id'];
     $value1 = $_POST['purpose'];
@@ -204,6 +291,25 @@ if (isset($_POST['update'])) {
 }
 
 
+if (isset($_POST['update1'])) {
+    $id = $_POST['id'];
+    $value1 = $_POST['purpose'];
+    $value2 = $_POST['status'];
+    $value3 = $_POST['effectivity'];
+    $value4 = $_POST['SO_numbers'];
+    $value5 = $_POST['control_no'];
+   
+
+    $query = "UPDATE retired_personnel
+              SET purpose = '$value1', status = '$value2', effectivity = '$value3', SO_numbers = '$value4', control_no = '$value5'
+              WHERE id = '$id'";
+    if (mysqli_query($conn, $query)) {
+        echo "Updated Successfully";
+    } else {
+        echo "Failed to update file in the database.";
+    }
+}
+
 if (isset($_POST['delete'])) { 
     $fileId = $_POST['id'];
     $query = "DELETE FROM retired_personnel WHERE id = '$fileId'";
@@ -215,4 +321,15 @@ if (isset($_POST['delete'])) {
     exit();
 }
 
+
+if (isset($_POST['delete1'])) { 
+    $fileId = $_POST['id'];
+    $query = "DELETE FROM retired_personnel1 WHERE id = '$fileId'";
+    if (mysqli_query($conn, $query)) {
+        echo "Your data has been deleted."; 
+    } else {
+        echo "Failed to delete data."; 
+    }
+    exit();
+}
 ?>

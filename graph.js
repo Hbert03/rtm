@@ -37,13 +37,19 @@ function updateChart(data) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'MONTHLY DATA OF RETIRED PERSONNEL',
+                    label: 'NUMBER OF DATA OF THE MONTH',
                     data: values,
                     backgroundColor: [
                         'rgba(40, 67, 135)',
+                        'rgba(40, 67, 135)',
+                        'rgba(40, 67, 135)',
+                        'rgba(40, 67, 135)',
                     ],
                     borderColor: [
-                        'rgba(169, 169, 169, 1)'
+                        'rgba(169, 169, 169, 1)',
+                        'rgba(169, 169, 169, 1)',
+                        'rgba(169, 169, 169, 1)',
+                        'rgba(169, 169, 169, 1)',
                     ],
                     borderWidth: 1
                 }]
@@ -82,7 +88,7 @@ function updateChart(data) {
 
 fetchData();
 
-setInterval(fetchData, 3000);
+setInterval(fetchData, 10000);
 
 
 

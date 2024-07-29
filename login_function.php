@@ -22,7 +22,7 @@ if (isset($_POST['user']) && isset($_POST['password'])) {
         $_SESSION['user_id'] = $row['user_id'];
 
         $user_id = $_SESSION['user_id'];
-        $allowed_user_id =  [340, 487,];
+        $allowed_user_id =  [340, 487, 351];
         if (in_array($user_id, $allowed_user_id)) {
             $user_sql = "SELECT u.*, o.office_name FROM tbl_user u INNER JOIN tbl_office o ON u.user_id = o.id WHERE u.user_id='$user_id'";
             $user_result = mysqli_query($conn, $user_sql);

@@ -31,7 +31,7 @@ class Retired {
     public function __construct() {
         include('database.php');
 
-        $sql = "SELECT COUNT(*) as total  FROM retired_personnel";
+        $sql = "SELECT COUNT(*) as total  FROM retired_personnel WHERE purpose ='Retirement'";
         
         $queryIns = $conn->query($sql);
         $retiredData = $queryIns->fetch_assoc();

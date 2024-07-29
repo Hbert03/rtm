@@ -13,3 +13,10 @@
   height: auto; 
 }
   }
+
+  #switchForm{
+  border-radius: 15px;
+  }
+  #switchForm:hover {
+    background: linear-gradient(to right, rgb(211, 55, 55), rgb(197, 172, 27));
+}
