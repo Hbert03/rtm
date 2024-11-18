@@ -175,7 +175,6 @@ if (isset($_SESSION['user_id'])) {
                           <th>Filename</th>
                           <th>File</th>
                           <th>Date</th>
-                          <th>Remarks</th>
                           <th>Requirements</th>
                         </tr>
                       </thead>
@@ -205,16 +204,17 @@ if (isset($_SESSION['user_id'])) {
       </div>
       <div class="modal-body">
         <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Requirement</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="checklistBody">
- 
-          </tbody>
-        </table>
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Status</th>
+            <th>Remarks</th>
+            <th>Date Added</th>
+          </tr>
+        </thead>
+        <tbody id="checklistBody">
+        </tbody>
+      </table>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

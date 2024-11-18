@@ -178,7 +178,6 @@ if  (isset($_SESSION['firstname'])) {
                           <th>Filename</th>
                           <th>File</th>
                           <th>Date</th>
-                          <th>Remarks</th>
                           <th>Requirements</th>
                         </tr>
                       </thead>
@@ -271,29 +270,36 @@ if  (isset($_SESSION['firstname'])) {
 
 
 
-<div class="modal fade" id="viewChecklistModal" tabindex="-1" aria-labelledby="viewChecklistModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Requirement</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="viewChecklistBody">
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
+<!-- Checklist View Modal -->
+<div class="modal fade" id="checklistViewModal" tabindex="-1" role="dialog" aria-labelledby="checklistViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="checklistViewModalLabel">Checklist</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Requirement</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="checklistViewBody">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 

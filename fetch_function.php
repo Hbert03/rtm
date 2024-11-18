@@ -422,21 +422,28 @@ if (isset($_POST['fetchintent'])) {
 
 
 
-// fetch_checklist.php
 if (isset($_POST['retired_intent_id'])) {
     $retired_intent_id = $_POST['retired_intent_id'];
-  
-    $query = "SELECT * FROM retired_intent_requirements WHERE retired_intent_id = '$retired_intent_id'";
+
+    $query = "SELECT 
+                id, 
+                requirement, 
+                status, 
+                remarks, 
+                remarks_date 
+              FROM retired_intent_requirements 
+              WHERE retired_intent_id = '$retired_intent_id'";
     $result = $conn->query($query);
-    
-    $checklist = array();
-    
+
+    $checklist = [];
     while ($row = $result->fetch_assoc()) {
-      $checklist[] = $row;
+        $checklist[] = $row;
     }
-  
+
     echo json_encode(['checklist' => $checklist]);
-  }
+    exit();
+}
+
 
   
 

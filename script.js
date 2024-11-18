@@ -734,14 +734,11 @@ $(document).ready(function() {
             },
             
             { "data": "date" },
-            {"data": "remarks"
-              
-            },
             { 
                 "data": "checklist", 
                 "render": function(data, type, row) {
                   return `
-                    <a type="button" class="btn btn-info btn-sm" style="align-items:center" onclick="openChecklistModalview(${row.id})">
+                    <a type="button" class="btn btn-info btn-sm" style="align-items:center" onclick="openChecklistView(${row.id})">
                       <span><i class="fa fa-eye">View Requirements</i></span>
                     </a>`;
                 }
@@ -761,39 +758,52 @@ $(document).ready(function() {
     });
 
 
-    function openChecklistModalview(intentId) {
-        $.ajax({
-          url: 'fetch_function.php',
-          type: 'POST',
-          data: { view_checklist: true, intent_id: intentId },
-          success: function(response) {
-            let data = JSON.parse(response);
-      
-        
-            $('#viewChecklistId').text(intentId);
-      
-  
-            let checklistHtml = '';
-            data.checklist.forEach(item => {
-              checklistHtml += `
-                <tr>
-                  <td>${item.requirement}</td>
-                  <td>${item.status == 1 ? 'Completed' : 'Not yet'}</td>
-                </tr>
-              `;
-            });
-      
-   
-            $('#viewChecklistBody').html(checklistHtml);
-      
 
-            $('#viewChecklistModal').modal('show');
-          },
-          error: function() {
-            toastr.error('Failed to fetch checklist data.');
-          }
+
+    function openChecklistView(retired_intent_id) {
+        $.ajax({
+            url: 'fetch_function.php',
+            type: 'POST',
+            data: { retired_intent_id: retired_intent_id },
+            success: function(response) {
+                const data = JSON.parse(response);
+                
+                let checklistHtml = '';
+                
+                data.checklist.forEach(item => {
+                    let formattedDate = 'N/A';
+                    if (item.remarks_date) {
+                        let date = new Date(item.remarks_date);
+                        formattedDate = date.toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
+                        }) + ' at ' + date.toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                    }
+                    const statusText = item.status == 1 ? 'Completed' : 'Not Yet';
+                    checklistHtml += `
+                        <tr>
+                            <td>${item.requirement}</td>
+                            <td>${statusText}</td>
+                            <td>${item.remarks || 'N/A'}</td>
+                            <td>${formattedDate}</td>
+                        </tr>
+                    `;
+                });
+    
+                $('#checklistViewBody').html(checklistHtml);
+                $('#checklistViewModal').modal('show');
+            },
+            error: function() {
+                alert('Failed to fetch checklist data.');
+            }
         });
-      }
+    }
+    
       
 
     $(document).ready(function() {
@@ -814,12 +824,6 @@ $(document).ready(function() {
             { "data": "filename" },
             { "data": "intent_letter" },
             { "data": "date" },
-            { 
-                "data": "remarks",
-                "render": function(data, type, row) {
-                    return data + ' <button class="btn btn-sm btn-warning" onclick="editRemarks(' + row.id + ', \'' + data + '\')">Add Remarks</button>';
-                }
-            },
             { "data": "checklist", "render": function(data, type, row) {
                 return '<a type="button" class="btn btn-info" onclick="openChecklistModal(' + row.id + ')"><span><i class="fa fa-pen"></i></span></a>';
               }
@@ -867,6 +871,7 @@ $(document).ready(function() {
     
 
     function openChecklistModal(retired_intent_id) {
+        
         $.ajax({
           url: 'fetch_function.php',
           type: 'POST',
@@ -878,12 +883,29 @@ $(document).ready(function() {
     
             let checklistHtml = '';
             data.checklist.forEach(item => {
+                let formattedDate = 'N/A';
+                if (item.remarks_date) {
+                    let date = new Date(item.remarks_date);
+                    formattedDate = date.toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    }) + ' at ' + date.toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                }
               checklistHtml += `
                 <tr>
                   <td>${item.requirement}</td>
                   <td>
                     <input type="checkbox" class="checklist-item" data-id="${item.id}" ${item.status == 1 ? 'checked' : ''} />
                   </td>
+                   <td>
+                   <input type="text" class="form-control checklist-remarks" data-id="${item.id}" value="${item.remarks || ''}" />
+               </td>
+                 <td>${formattedDate}</td>
                 </tr>
               `;
             });
@@ -899,31 +921,28 @@ $(document).ready(function() {
         });
       }
       
+
+      
       $('#saveChecklistBtn').click(function() {
         let updatedChecklist = [];
       
-  
         $('.checklist-item').each(function() {
           let itemId = $(this).data('id');
           let status = $(this).prop('checked') ? 1 : 0;
-          updatedChecklist.push({ id: itemId, status: status });
+          let remarks = $(`.checklist-remarks[data-id="${itemId}"]`).val();
+          updatedChecklist.push({ id: itemId, status: status, remarks: remarks });
         });
       
-
         $.ajax({
           url: 'save_checklist.php',
           type: 'POST',
-          data: { checklist: JSON.stringify(updatedChecklist) },
+          data: { checklist: updatedChecklist },
           success: function(response) {
-            if (response == '1') {
-              toastr.success('Checklist updated successfully!');
-              $('#checklistModal').modal('hide');
-            } else {
-              toastr.error('Failed to save checklist.');
-            }
+            toastr.success('Checklist updated successfully!');
+            $('#checklistModal').modal('hide'); 
           },
           error: function() {
-            toastr.error('An error occurred while saving the checklist.');
+            toastr.error('Failed to save checklist.');
           }
         });
       });

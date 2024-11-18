@@ -1,22 +1,23 @@
 <?php
 include('database.php');
-
 if (isset($_POST['checklist'])) {
-  $checklist = json_decode($_POST['checklist'], true);
-  $success = true;
+    date_default_timezone_set('Asia/Manila');
+    $checklist = $_POST['checklist'];
+    $now = date('Y-m-d H:i:s');
 
-  foreach ($checklist as $item) {
-      $id = $item['id'];
-      $status = $item['status'];
+    foreach ($checklist as $item) {
+        $id = $item['id'];
+        $status = $item['status'];
+        $remarks = $conn->real_escape_string($item['remarks']);
 
-      $query = "UPDATE retired_intent_requirements SET status = '$status' WHERE id = '$id'";
-      if (!$conn->query($query)) {
-          $success = false;
-          break;
-      }
-  }
+        $query = "UPDATE retired_intent_requirements 
+                  SET status = $status, remarks = '$remarks', remarks_date = '$now' 
+                  WHERE id = $id";
+        $conn->query($query);
+    }
 
-  echo $success ? '1' : '0';
+    echo json_encode(['success' => true]);
 }
+
 
 ?>
