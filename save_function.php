@@ -1,4 +1,5 @@
 <?php
+session_start();
 include('database.php');
 
 if(isset($_POST['save'])) {
@@ -66,7 +67,73 @@ if(isset($_POST['save1'])) {
         }
     }
 
+    function createDefaultChecklist($id, $hris_code) {
+        global $conn;
+        $checklistItems = [
+            ["Indorsement from the School Head/Immediate Supervisor"],
+            ["Duly filled out GSIS Application Form with passport size ID picture of the member and of the spouse, if married"],
+            ["Duly signed Division and School Clearance"],
+            ["Declaration of Non-Pendency Case"],
+            ["Certificate of No Pending Administrative Case"],
+            ["Service Record (Indicate leave of Absence)"],
+            ["Certification of Leave Without Pay"],
+            ["Photocopy of UMID, back-to-back"]
+        ];
+    
+        foreach ($checklistItems as $item) {
+            $query = "INSERT INTO retired_intent_requirements (retired_intent_id, hris, requirement, status) VALUES ('$id','$hris_code', '$item[0]', 0)";
+            $conn->query($query);
+        }
+    }
+    
+
+
+    if (isset($_FILES['intent_letter'])) {
+        $hris_code = $_SESSION['hris_code'];
+        $intent_letter = $_FILES['intent_letter'];
+        $upload_dir = "uploads/";
+    
+        $filename = basename($intent_letter['name']);
+        $intent_letter_path = $upload_dir . $filename;
+    
+        if (move_uploaded_file($intent_letter['tmp_name'], $intent_letter_path)) {
+            $sql = "INSERT INTO retired_intent (hris, filename, intent_letter) VALUES ('$hris_code', '$filename', '$intent_letter_path')";
+            
+            if (mysqli_query($conn, $sql)) {
+         
+                $id = mysqli_insert_id($conn);
+                createDefaultChecklist($id, $hris_code);
+                
+                echo "1";
+            } else {
+                echo "0"; 
+            }
+        } else {
+            echo "File upload failed.";
+        }
+    
+        mysqli_close($conn);
+    }
+    
 
 
 
-?>
+if (isset($_POST['id']) && isset($_POST['remarks'])) {
+    $id = $_POST['id'];
+    $remarks = $_POST['remarks'];
+
+
+    $remarks = mysqli_real_escape_string($conn, $remarks);
+
+    $query = "UPDATE retired_intent SET remarks = '$remarks' WHERE id = '$id'";
+
+    if ($conn->query($query) === TRUE) {
+        echo 'success';
+    } else {
+        echo 'error';
+    }
+}
+
+    
+    ?>
+

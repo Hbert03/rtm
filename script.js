@@ -626,18 +626,21 @@ function deleteID() {
     
 
 
-setInterval(function() {
-   
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-         
-            document.getElementById("totalRetiredCount").innerHTML = this.responseText;
-        }
-    };
-    xhttp.open("GET", "update_class.php", true);
-    xhttp.send();
-}, 5000); 
+document.addEventListener("DOMContentLoaded", function() {
+    setInterval(function() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var element = document.getElementById("totalRetiredCount");
+                if (element) { 
+                    element.innerHTML = this.responseText;
+                }
+            }
+        };
+        xhttp.open("GET", "update_class.php", true);
+        xhttp.send();
+    }, 5000);
+});
 
 function confirmLogout() {
     Swal.fire({
@@ -654,3 +657,274 @@ function confirmLogout() {
         }
     });
 }
+
+
+
+
+$("form.intent").submit(function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+
+    Swal.fire({
+        title: 'Processing...',
+        text: 'Please wait while we process your request.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    $.ajax({
+        url: "save_function.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(returnedData) {
+            Swal.close();
+            if (returnedData == 1) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Submitted Successfully",
+                    allowOutsideClick: false,
+                    showConfirmButton: true,
+                    showCloseButton: false
+                }).then(() => {
+                    $('#successModal').modal('show');
+                });
+            } else if (returnedData == 0) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Upload Failed! Check your Network",
+                    allowOutsideClick: false,
+                    showConfirmButton: true,
+                    showCloseButton: false
+                });
+            } 
+        },
+    });
+});
+
+
+
+
+$(document).ready(function() {
+    var table =  $('#intent').DataTable({
+        serverSide: true,
+        responsive: true,
+        lengthChange: true,
+        autoWidth: false,
+        ajax: {
+            url: "fetch_function.php",
+            type: "POST",
+            data: { fetchintent: true },
+            error: function(thrown) {
+                console.log("Ajax request failed: " + thrown);
+            }
+        },
+        columns: [
+            {
+            "data": "filename"
+            },
+            { 
+                "data": "intent_letter",
+                "render": function(data) {
+                    return data;
+                }
+            },
+            
+            { "data": "date" },
+            {"data": "remarks"
+              
+            },
+            { 
+                "data": "checklist", 
+                "render": function(data, type, row) {
+                  return `
+                    <a type="button" class="btn btn-info btn-sm" style="align-items:center" onclick="openChecklistModalview(${row.id})">
+                      <span><i class="fa fa-eye">View Requirements</i></span>
+                    </a>`;
+                }
+              }
+              
+        ]
+    });
+    setInterval(function() {
+        table.ajax.reload(null, false); 
+    }, 2000); 
+    });
+
+
+    $(document).on('change', '.custom-file-input', function(event) {
+        var inputFile = event.currentTarget;
+        $(inputFile).parent().find('.custom-file-label').html(inputFile.files[0].name);
+    });
+
+
+    function openChecklistModalview(intentId) {
+        $.ajax({
+          url: 'fetch_function.php',
+          type: 'POST',
+          data: { view_checklist: true, intent_id: intentId },
+          success: function(response) {
+            let data = JSON.parse(response);
+      
+        
+            $('#viewChecklistId').text(intentId);
+      
+  
+            let checklistHtml = '';
+            data.checklist.forEach(item => {
+              checklistHtml += `
+                <tr>
+                  <td>${item.requirement}</td>
+                  <td>${item.status == 1 ? 'Completed' : 'Not yet'}</td>
+                </tr>
+              `;
+            });
+      
+   
+            $('#viewChecklistBody').html(checklistHtml);
+      
+
+            $('#viewChecklistModal').modal('show');
+          },
+          error: function() {
+            toastr.error('Failed to fetch checklist data.');
+          }
+        });
+      }
+      
+
+    $(document).ready(function() {
+        $('#admin_intent').DataTable({
+          serverSide: true,
+          responsive: true,
+          lengthChange: true,
+          autoWidth: false,
+          ajax: {
+            url: "fetch_function.php",
+            type: "POST",
+            data: { fetchadminintent: true },
+            error: function(thrown) {
+              console.log("Ajax request failed: " + thrown);
+            }
+          },
+          columns: [
+            { "data": "filename" },
+            { "data": "intent_letter" },
+            { "data": "date" },
+            { 
+                "data": "remarks",
+                "render": function(data, type, row) {
+                    return data + ' <button class="btn btn-sm btn-warning" onclick="editRemarks(' + row.id + ', \'' + data + '\')">Add Remarks</button>';
+                }
+            },
+            { "data": "checklist", "render": function(data, type, row) {
+                return '<a type="button" class="btn btn-info" onclick="openChecklistModal(' + row.id + ')"><span><i class="fa fa-pen"></i></span></a>';
+              }
+            },
+          ]
+        });
+      });
+      
+
+      function editRemarks(id, currentRemarks) {
+
+        $('#edit_id').val(id);
+        $('#edit_remarks').val(currentRemarks);
+    
+
+        $('#editRemarksModal').modal('show');
+    }
+    
+    $('#saveRemarksBtn').click(function() {
+        var id = $('#edit_id').val();
+        var remarks = $('#edit_remarks').val();
+    
+ 
+        $.ajax({
+            url: 'save_function.php',
+            type: 'POST',
+            data: { id: id, remarks: remarks },
+            success: function(response) {
+                if (response === 'success') {
+          
+                    $('#editRemarksModal').modal('hide');
+                    
+                    $('#admin_intent').DataTable().ajax.reload();
+    
+                    toastr.success("Remarks updated successfully!");
+                } else {
+                    toastr.success('Failed to update remarks');
+                }
+            },
+            error: function() {
+                alert('An error occurred while updating remarks');
+            }
+        });
+    });
+    
+
+    function openChecklistModal(retired_intent_id) {
+        $.ajax({
+          url: 'fetch_function.php',
+          type: 'POST',
+          data: { retired_intent_id: retired_intent_id },
+          success: function(response) {
+            let data = JSON.parse(response);
+      
+
+    
+            let checklistHtml = '';
+            data.checklist.forEach(item => {
+              checklistHtml += `
+                <tr>
+                  <td>${item.requirement}</td>
+                  <td>
+                    <input type="checkbox" class="checklist-item" data-id="${item.id}" ${item.status == 1 ? 'checked' : ''} />
+                  </td>
+                </tr>
+              `;
+            });
+      
+   
+            $('#checklistBody').html(checklistHtml);
+      
+            $('#checklistModal').modal('show');
+          },
+          error: function() {
+            toastr.error('Failed to fetch checklist data.');
+          }
+        });
+      }
+      
+      $('#saveChecklistBtn').click(function() {
+        let updatedChecklist = [];
+      
+  
+        $('.checklist-item').each(function() {
+          let itemId = $(this).data('id');
+          let status = $(this).prop('checked') ? 1 : 0;
+          updatedChecklist.push({ id: itemId, status: status });
+        });
+      
+
+        $.ajax({
+          url: 'save_checklist.php',
+          type: 'POST',
+          data: { checklist: JSON.stringify(updatedChecklist) },
+          success: function(response) {
+            if (response == '1') {
+              toastr.success('Checklist updated successfully!');
+              $('#checklistModal').modal('hide');
+            } else {
+              toastr.error('Failed to save checklist.');
+            }
+          },
+          error: function() {
+            toastr.error('An error occurred while saving the checklist.');
+          }
+        });
+      });
+      

@@ -1,4 +1,5 @@
 <?php
+session_start();
 include('database.php');
 
 
@@ -332,4 +333,212 @@ if (isset($_POST['delete1'])) {
     }
     exit();
 }
+
+
+
+
+if (isset($_POST['fetchintent'])) {
+    $hris_code = $_SESSION['hris_code'];
+    function getDataTable1($draw, $start, $length, $search, $hris_code) {
+        global $conn;
+        global $hris_code;
+
+        $sortableColumns = array('filename'); 
+
+        $orderBy = 'filename';
+        $orderDir = 'DESC'; 
+
+        if (isset($_POST['order'][0]['column']) && isset($_POST['order'][0]['dir'])) {
+            $columnIdx = intval($_POST['order'][0]['column']);
+            $orderDir = $_POST['order'][0]['dir'];
+
+            if (isset($sortableColumns[$columnIdx])) {
+                $orderBy = $sortableColumns[$columnIdx];
+            }
+        }
+
+        $query = "SELECT ri.*, GROUP_CONCAT(JSON_OBJECT(
+                'requirement', cs.requirement,
+                'status', cs.status)) AS checklist FROM retired_intent ri INNER JOIN retired_intent_requirements cs ON ri.hris = cs.hris  WHERE ri.hris = '$hris_code'";
+        if (!empty($search)) {
+            $query .= " AND (filename LIKE '%" . $search . "%') ";
+        }
+
+        $query .= " ORDER BY date  DESC LIMIT $start, $length";
+
+        $result = $conn->query($query);
+
+        $data = array();
+
+        while ($row = $result->fetch_assoc()) {
+            $row['intent_letter'] = getFileHTML($row['intent_letter']);
+  
+
+            $data[] = $row;
+        }
+
+        $totalQuery = "SELECT COUNT(*) as total FROM retired_intent WHERE hris = '$hris_code'";
+        if (!empty($search)) {
+            $totalQuery .= " AND (filename LIKE '%" . $search . "%')";
+        }
+        $totalResult = $conn->query($totalQuery);
+        $totalRow = $totalResult->fetch_assoc();
+        $totalRecords = $totalRow['total'];
+
+        $output = array(
+            "draw"            => intval($draw),
+            "recordsTotal"    => intval($totalRecords),
+            "recordsFiltered" => intval($totalRecords),
+            "data"            => $data
+        );
+
+        return json_encode($output);
+    }
+
+    function getFileHTML($filePath) {
+        if (!empty($filePath)) {
+            $fileExtension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+            if (in_array($fileExtension, array('jpg', 'jpeg', 'png', 'gif'))) {
+                return '<a href="uploads/' . basename($filePath) . '" target="_blank"><img src="uploads/' . basename($filePath) . '" width="50" height="50"/></a>';
+            } elseif ($fileExtension === 'pdf') {
+                return '<a href="uploads/' . basename($filePath) . '" target="_blank">View PDF</a>';
+            }
+            elseif ($fileExtension === 'docx') {
+                return '<a href="uploads/' . basename($filePath) . '" target="_blank">View Word</a>';
+            }
+        }
+        return 'No file ';
+    }
+    
+
+    $draw = $_POST["draw"];
+    $start = $_POST["start"];
+    $length = $_POST["length"];
+    $search = $_POST["search"]["value"];
+
+    echo getDataTable1($draw, $start, $length, $search, $hris_code);    
+    exit();
+}
+
+
+
+// fetch_checklist.php
+if (isset($_POST['retired_intent_id'])) {
+    $retired_intent_id = $_POST['retired_intent_id'];
+  
+    $query = "SELECT * FROM retired_intent_requirements WHERE retired_intent_id = '$retired_intent_id'";
+    $result = $conn->query($query);
+    
+    $checklist = array();
+    
+    while ($row = $result->fetch_assoc()) {
+      $checklist[] = $row;
+    }
+  
+    echo json_encode(['checklist' => $checklist]);
+  }
+
+  
+
+
+if (isset($_POST['fetchadminintent'])) {
+
+    function getDataTable1($draw, $start, $length, $search) {
+        global $conn;
+
+        $sortableColumns = array('filename');
+        $orderBy = 'filename';
+        $orderDir = 'DESC';
+
+        if (isset($_POST['order'][0]['column']) && isset($_POST['order'][0]['dir'])) {
+            $columnIdx = intval($_POST['order'][0]['column']);
+            $orderDir = $_POST['order'][0]['dir'];
+
+            if (isset($sortableColumns[$columnIdx])) {
+                $orderBy = $sortableColumns[$columnIdx];
+            }
+        }
+
+
+        $query = "SELECT ri.*, GROUP_CONCAT(JSON_OBJECT(
+                'requirement', cs.requirement,
+                'status', cs.status
+            )) AS checklist
+            FROM retired_intent ri
+            LEFT JOIN retired_intent_requirements cs ON ri.hris = cs.hris
+            WHERE 1=1 ";
+
+        if (!empty($search)) {
+            $query .= " AND (ri.filename LIKE '%" . $search . "%') ";
+        }
+
+        $query .= " GROUP BY ri.id ORDER BY $orderBy $orderDir LIMIT $start, $length";
+        $result = $conn->query($query);
+
+        $data = array();
+
+        while ($row = $result->fetch_assoc()) {
+      
+            $row['intent_letter'] = getFileHTML($row['intent_letter']);
+            $row['checklist'] = json_decode("[" . $row['checklist'] . "]"); 
+            $data[] = $row;
+        }
+
+  
+        $totalQuery = "SELECT COUNT(*) as total FROM retired_intent WHERE 1=1";
+        if (!empty($search)) {
+            $totalQuery .= " AND (filename LIKE '%" . $search . "%')";
+        }
+        $totalResult = $conn->query($totalQuery);
+        $totalRow = $totalResult->fetch_assoc();
+        $totalRecords = $totalRow['total'];
+
+        $output = array(
+            "draw"            => intval($draw),
+            "recordsTotal"    => intval($totalRecords),
+            "recordsFiltered" => intval($totalRecords),
+            "data"            => $data
+        );
+
+        return json_encode($output);
+    }
+
+    function getFileHTML($filePath) {
+        if (!empty($filePath)) {
+            $fileExtension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+            if (in_array($fileExtension, array('jpg', 'jpeg', 'png', 'gif'))) {
+                return '<a href="uploads/' . basename($filePath) . '" target="_blank"><img src="../uploads/' . basename($filePath) . '" width="50" height="50"/></a>';
+            } elseif ($fileExtension === 'pdf') {
+                return '<a href="uploads/' . basename($filePath) . '" target="_blank">View PDF</a>';
+            } elseif ($fileExtension === 'docx') {
+                return '<a href="uploads/' . basename($filePath) . '" target="_blank">View Word</a>';
+            }
+        }
+        return 'N/A';
+    }
+
+    $draw = $_POST["draw"];
+    $start = $_POST["start"];
+    $length = $_POST["length"];
+    $search = $_POST["search"]["value"];
+
+    echo getDataTable1($draw, $start, $length, $search);    
+    exit();
+}
+
+
+if (isset($_POST['view_checklist']) && isset($_POST['intent_id'])) {
+    $intent_id = $_POST['intent_id'];
+    $query = "SELECT requirement, status FROM retired_intent_requirements WHERE retired_intent_id = '$intent_id'";
+    $result = $conn->query($query);
+
+    $checklist = array();
+    while ($row = $result->fetch_assoc()) {
+        $checklist[] = $row;
+    }
+
+    echo json_encode(['checklist' => $checklist]);
+    exit();
+}
+
 ?>

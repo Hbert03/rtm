@@ -10,7 +10,7 @@
     <div>
         <div class="d-flex">
         <button type="button" id="switchForm" class="btn btn-info btn-sm mb-2 pe-2"><span><i class="fas fa-random"></i></span> Switch Form</button>
-        <button type="button" id="switchForm1" class="btn btn-info btn-sm mb-2 pe-2"><span><i class="fas fa-plus"></i></span> ADD SO</button>
+        <!-- <button type="button" id="switchForm1" class="btn btn-info btn-sm mb-2 pe-2"><span><i class="fas fa-plus"></i></span> ADD SO</button> -->
         </div>
         <form id="saveform" >
             <select class="form-control personnel"id="personnel" name="personnel">

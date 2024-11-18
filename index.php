@@ -1,4 +1,6 @@
-<?php include('header.php'); 
+<?php 
+
+include('header.php'); 
 include('class.php'); 
 $employee = new Employee();
 $totalEmployees = $employee->getValue("totalEmployees");
@@ -7,7 +9,17 @@ $totalRetired = $retired->getValue("totalRetired");
 
 ?>
 
-
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img src="img/DEPEDLOGO.png" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <a href="#" class="d-block"><?php echo $_SESSION['office_name'];   ?></a>
+        </div>
+      </div>
 
 
       <!-- Sidebar Menu -->
@@ -132,7 +144,6 @@ $totalRetired = $retired->getValue("totalRetired");
                       </div>
      
                     </div>
- 
                  </div>
                 </div>
                 <!-- /.row -->

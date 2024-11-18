@@ -1,15 +1,29 @@
 <?php
 
+
 include('session.php');
 
-if (!isset($_SESSION['user_id'])) {
-  header("Location: login.php");
-  exit();
+
+if (isset($_SESSION['user_id'])) {
+
+    if (isset($_SESSION['office_name'])) {
+    }
+    if (basename($_SERVER['PHP_SELF']) !== 'index.php' && basename($_SERVER['PHP_SELF']) !== 'report.php') {
+      header("Location: index.php");
+      exit();
+  }
+    
+    
+} else {
+    if (basename($_SERVER['PHP_SELF']) !== 'login.php') {
+        header("Location: login.php");
+        exit();
+    }
 }
-if (isset($_SESSION['office_name'])) {
-   
-}
+
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,8 +50,6 @@ if (isset($_SESSION['office_name'])) {
   <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <link rel="stylesheet" href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-  <link rel="stylesheet" href="plugins/datatables/">
-  <link rel="stylesheet" href="plugins/datatables/">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -90,16 +102,6 @@ if (isset($_SESSION['office_name'])) {
       <span class="brand-text font-weight-light">RETIREMENT SYSTEM</span>
     </a>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="img/DEPEDLOGO.png" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-          <a href="#" class="d-block"><?php echo $_SESSION['office_name'];   ?></a>
-        </div>
-      </div>
+
 
     
